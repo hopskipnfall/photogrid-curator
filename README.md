@@ -8,8 +8,8 @@ This curator was specifically designed and used to compile photo entries for the
 
 Built using Gemini 3.5 Flash.
 
-<!-- Placeholder for screenshot. You can upload your screenshot.png to the root of the repository via the GitHub UI -->
-![PhotoGrid Curator Screenshot](./screenshot.png)
+<img width="1167" height="669" alt="スクリーンショット 2026-06-04 8 09 39" src="https://github.com/user-attachments/assets/5988c4a0-cedf-490a-8d90-2bc780db58d6" />
+
 
 ---
 
