@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PhotoGrid Curator — Photography Grid Composer</title>
+  <!-- Modern Geometric Typography -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="index.css">
+</head>
+<body>
+  <div class="app-layout">
+    <!-- Left Sidebar: Controls & Settings -->
+    <aside class="sidebar sidebar-left">
+      <div class="sidebar-header">
+        <h1 class="logo-text">PHOTOGRID</h1>
+        <span class="logo-subtext">CONTEST CURATOR</span>
+      </div>
+      
+      <!-- Edit Mode Selector -->
+      <div class="sidebar-section">
+        <div class="section-title">Edit Mode</div>
+        <div class="mode-selector">
+          <button class="mode-btn active" id="modeArrange">Arrange</button>
+          <button class="mode-btn" id="modeCrop">Crop & Zoom</button>
+        </div>
+      </div>
+
+      <!-- Mosaic Grouping controls -->
+      <div class="sidebar-section">
+        <div class="section-title">Mosaic Grouping</div>
+        <button class="btn btn-secondary btn-full" id="btnGroupMode">Group Squares</button>
+        <div class="group-selection-actions hidden" id="groupSelectionActions">
+          <p class="selection-help">Click squares on the grid to group them, then click Confirm.</p>
+          <div class="action-buttons-row">
+            <button class="btn btn-secondary" id="btnCancelGroup">Cancel</button>
+            <button class="btn btn-primary" id="btnConfirmGroup">Confirm</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Export Settings -->
+      <div class="sidebar-section">
+        <div class="section-title">Export Settings</div>
+        <label class="toggle-setting">
+          <input type="checkbox" id="toggleFilenames">
+          <span class="toggle-label">Show Filenames on Grid</span>
+        </label>
+      </div>
+
+      <!-- Grid Action Controls -->
+      <div class="sidebar-actions">
+        <button class="btn btn-secondary btn-full" id="btnRandom">Randomize Layout</button>
+        <button class="btn btn-secondary btn-full" id="btnClear">Clear Grid</button>
+        <button class="btn btn-secondary btn-full" id="btnUndo" disabled>
+          <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M3 7v6h6M21 17a9 9 0 0 0-9-9 9 9 0 0 0-6 2.3L3 13"/>
+          </svg>
+          Undo
+        </button>
+        <button class="btn btn-primary btn-save btn-full" id="btnSave">
+          <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/>
+          </svg>
+          Save Grid
+        </button>
+      </div>
+    </aside>
+
+    <!-- Center Workspace Area -->
+    <main class="main-content">
+      <div class="workspace-canvas-area">
+        <div class="grid-container-wrapper">
+          <!-- mode-arrange is set on load -->
+          <div class="grid-canvas mode-arrange" id="gridCanvas">
+            <!-- 9 Slots -->
+            <div class="grid-slot" data-index="0" draggable="false">
+              <div class="slot-empty">
+                <span class="plus-icon">+</span>
+                <span class="slot-label">Drag Photo</span>
+              </div>
+            </div>
+            <div class="grid-slot" data-index="1" draggable="false">
+              <div class="slot-empty">
+                <span class="plus-icon">+</span>
+                <span class="slot-label">Drag Photo</span>
+              </div>
+            </div>
+            <div class="grid-slot" data-index="2" draggable="false">
+              <div class="slot-empty">
+                <span class="plus-icon">+</span>
+                <span class="slot-label">Drag Photo</span>
+              </div>
+            </div>
+            <div class="grid-slot" data-index="3" draggable="false">
+              <div class="slot-empty">
+                <span class="plus-icon">+</span>
+                <span class="slot-label">Drag Photo</span>
+              </div>
+            </div>
+            <div class="grid-slot" data-index="4" draggable="false">
+              <div class="slot-empty">
+                <span class="plus-icon">+</span>
+                <span class="slot-label">Drag Photo</span>
+              </div>
+            </div>
+            <div class="grid-slot" data-index="5" draggable="false">
+              <div class="slot-empty">
+                <span class="plus-icon">+</span>
+                <span class="slot-label">Drag Photo</span>
+              </div>
+            </div>
+            <div class="grid-slot" data-index="6" draggable="false">
+              <div class="slot-empty">
+                <span class="plus-icon">+</span>
+                <span class="slot-label">Drag Photo</span>
+              </div>
+            </div>
+            <div class="grid-slot" data-index="7" draggable="false">
+              <div class="slot-empty">
+                <span class="plus-icon">+</span>
+                <span class="slot-label">Drag Photo</span>
+              </div>
+            </div>
+            <div class="grid-slot" data-index="8" draggable="false">
+              <div class="slot-empty">
+                <span class="plus-icon">+</span>
+                <span class="slot-label">Drag Photo</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <!-- Right Sidebar: Photo Drawer -->
+    <aside class="sidebar sidebar-right">
+      <div class="sidebar-header border-bottom">
+        <h2>Photo Bin</h2>
+        <span class="image-count" id="imageCount">0 photos</span>
+      </div>
+      
+      <!-- Upload Section -->
+      <div class="upload-section">
+        <label for="imageUpload" class="btn btn-primary btn-upload">
+          <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12"/>
+          </svg>
+          Load JPEGs
+        </label>
+        <input type="file" id="imageUpload" multiple accept="image/jpeg,image/jpg" style="display: none;">
+      </div>
+
+      <!-- Library List container -->
+      <div class="library-container">
+        <div class="library-empty" id="libraryEmpty">
+          <svg class="empty-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1">
+            <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
+            <circle cx="8.5" cy="8.5" r="1.5" />
+            <polyline points="21 15 16 10 5 21" />
+          </svg>
+          <p>Drag photos here or click 'Load JPEGs' to import.</p>
+        </div>
+        <div class="image-library hidden" id="imageLibrary"></div>
+      </div>
+    </aside>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>

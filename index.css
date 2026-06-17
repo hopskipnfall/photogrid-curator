@@ -1,0 +1,864 @@
+/* Design Tokens & Reset */
+:root {
+  --bg-app: radial-gradient(circle at 10% 20%, #1e2530 0%, #0d1117 90%);
+  --bg-sidebar: rgba(22, 27, 34, 0.7);
+  --border-glass: rgba(255, 255, 255, 0.05);
+  
+  --color-primary: #00e5ff;
+  --color-primary-hover: #00bcd4;
+  --color-primary-grad: linear-gradient(135deg, #00f2fe 0%, #4facfe 100%);
+  --color-primary-glow: rgba(79, 172, 254, 0.4);
+  
+  --color-secondary: rgba(255, 255, 255, 0.06);
+  --color-secondary-hover: rgba(255, 255, 255, 0.12);
+  --border-secondary: rgba(255, 255, 255, 0.1);
+  
+  --color-text-main: #f0f6fc;
+  --color-text-muted: #8b949e;
+  
+  --grid-border-color: #ffffff; /* Pure white as grid background and gaps */
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Outfit', sans-serif;
+  background: var(--bg-app);
+  color: var(--color-text-main);
+  min-height: 100vh;
+  overflow: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* App Layout: 3 Columns */
+.app-layout {
+  display: grid;
+  grid-template-columns: 240px 1fr 280px;
+  height: 100vh;
+  width: 100vw;
+}
+
+/* Sidebar Common Styling */
+.sidebar {
+  background: var(--bg-sidebar);
+  backdrop-filter: blur(16px);
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding: 24px 20px;
+  overflow: hidden;
+}
+
+.sidebar-left {
+  border-right: 1px solid var(--border-glass);
+}
+
+.sidebar-right {
+  border-left: 1px solid var(--border-glass);
+}
+
+.sidebar-header {
+  margin-bottom: 24px;
+}
+
+.sidebar-header h2 {
+  font-size: 18px;
+  font-weight: 600;
+  display: inline-block;
+}
+
+.sidebar-header.border-bottom {
+  border-bottom: 1px solid var(--border-glass);
+  padding-bottom: 12px;
+  margin-bottom: 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+}
+
+.logo-text {
+  font-size: 20px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  background: linear-gradient(135deg, #ffffff 0%, #a5b4fc 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.logo-subtext {
+  font-size: 9px;
+  font-weight: 600;
+  color: var(--color-text-muted);
+  letter-spacing: 3px;
+  display: block;
+  margin-top: 2px;
+}
+
+/* Sidebar Sections */
+.sidebar-section {
+  margin-bottom: 24px;
+}
+
+.section-title {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--color-text-muted);
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+
+/* Custom Toggle Switch for Settings */
+.toggle-setting {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--color-text-muted);
+  user-select: none;
+  padding: 4px 0;
+}
+
+.toggle-setting input[type="checkbox"] {
+  position: relative;
+  width: 34px;
+  height: 18px;
+  -webkit-appearance: none;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  outline: none;
+  border-radius: 9px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.toggle-setting input[type="checkbox"]:checked {
+  background: var(--color-primary-grad);
+  border-color: var(--color-primary);
+}
+
+.toggle-setting input[type="checkbox"]::before {
+  content: '';
+  position: absolute;
+  top: 1px;
+  left: 1px;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #ffffff;
+  transition: all 0.3s ease;
+}
+
+.toggle-setting input[type="checkbox"]:checked::before {
+  left: 17px;
+  background: #0b0e14;
+}
+
+.toggle-setting:hover .toggle-label {
+  color: var(--color-text-main);
+}
+
+/* Mode Selector Switcher (Arrange vs Crop) */
+.mode-selector {
+  display: flex;
+  background: rgba(0, 0, 0, 0.25);
+  border: 1px solid var(--border-glass);
+  border-radius: 8px;
+  padding: 3px;
+  gap: 4px;
+}
+
+.mode-btn {
+  flex: 1;
+  padding: 8px 10px;
+  border: none;
+  background: transparent;
+  color: var(--color-text-muted);
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 500;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-align: center;
+}
+
+.mode-btn.active {
+  background: var(--color-primary-grad);
+  color: #0b0e14;
+  font-weight: 600;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+}
+
+.mode-btn:hover:not(.active) {
+  color: var(--color-text-main);
+  background: rgba(255, 255, 255, 0.03);
+}
+
+/* Upload Area */
+.upload-section {
+  margin-bottom: 16px;
+}
+
+.icon {
+  width: 18px;
+  height: 18px;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  display: inline-block;
+}
+
+/* Button UI */
+.btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px 20px;
+  border-radius: 8px;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  text-decoration: none;
+  user-select: none;
+}
+
+.btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  pointer-events: none;
+  box-shadow: none !important;
+  transform: none !important;
+}
+
+.btn-upload {
+  width: 100%;
+  text-align: center;
+}
+
+.btn-primary {
+  background: var(--color-primary-grad);
+  border: none;
+  color: #0b0e14;
+  font-weight: 600;
+  box-shadow: 0 4px 14px 0 var(--color-primary-glow);
+}
+
+.btn-primary:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px 0 var(--color-primary-glow);
+  opacity: 0.95;
+}
+
+.btn-primary:active {
+  transform: translateY(1px);
+}
+
+.btn-secondary {
+  background: var(--color-secondary);
+  border: 1px solid var(--border-secondary);
+  color: var(--color-text-main);
+}
+
+.btn-secondary:hover {
+  background: var(--color-secondary-hover);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+/* Sidebar Actions (Left column bottom controls) */
+.sidebar-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: auto; /* Push actions to the bottom of the left sidebar */
+}
+
+.btn-full {
+  width: 100%;
+}
+
+/* Gallery / Library Drawer */
+.library-container {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  overflow: hidden;
+}
+
+.image-count {
+  font-size: 12px;
+  color: var(--color-text-muted);
+}
+
+.library-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  flex-grow: 1;
+  text-align: center;
+  padding: 16px;
+  color: var(--color-text-muted);
+  border: 2px dashed rgba(255, 255, 255, 0.05);
+  border-radius: 8px;
+}
+
+.empty-icon {
+  width: 40px;
+  height: 40px;
+  margin-bottom: 12px;
+  stroke: var(--color-text-muted);
+  opacity: 0.5;
+}
+
+.library-empty p {
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.image-library {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+  overflow-y: auto;
+  flex-grow: 1;
+  padding-right: 4px;
+}
+
+/* Scrollbars */
+.image-library::-webkit-scrollbar {
+  width: 6px;
+}
+
+.image-library::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.image-library::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 3px;
+}
+
+.image-library::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+/* Thumbnails */
+.library-thumb {
+  position: relative;
+  width: 100%;
+  height: 0;
+  padding-bottom: 100%; /* Bulletproof 1:1 Aspect Ratio Hack */
+  border-radius: 8px;
+  overflow: hidden;
+  background: rgba(0, 0, 0, 0.2);
+  border: 2px solid transparent;
+  cursor: grab;
+  transition: all 0.2s ease;
+  user-select: none;
+}
+
+.library-thumb:hover {
+  transform: translateY(-2px);
+  border-color: rgba(79, 172, 254, 0.5);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.library-thumb:active {
+  cursor: grabbing;
+}
+
+.library-thumb img {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  pointer-events: none; /* Allows div drag event to trigger */
+}
+
+/* Placed checkmark badge */
+.library-thumb.is-placed::after {
+  content: "✓";
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  background: #10b981;
+  color: white;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: bold;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+}
+
+/* Selected thumbnail outline (Click-to-place fallback) */
+.library-thumb.is-selected {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 12px var(--color-primary-glow);
+  transform: scale(1.02);
+}
+
+/* Main Content Workspace */
+.main-content {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+  padding: 24px;
+}
+
+/* Central Workspace Area */
+.workspace-canvas-area {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-grow: 1;
+  overflow: hidden;
+  padding: 16px;
+}
+
+/* Grid Framing with pure white background and borders */
+.grid-container-wrapper {
+  background: var(--grid-border-color);
+  padding: 4px;
+  border-radius: 12px;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+  width: 100%;
+  max-width: 600px;
+  aspect-ratio: 1 / 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.grid-canvas {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(3, 1fr);
+  gap: 4px; /* Pure white spacing */
+  width: 100%;
+  height: 100%;
+  background: var(--grid-border-color); /* Gaps show as background color */
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+/* Individual Grid Slots */
+.grid-slot {
+  position: relative;
+  aspect-ratio: 1 / 1;
+  background-color: var(--grid-border-color);
+  overflow: hidden;
+  user-select: none;
+  transition: all 0.2s ease;
+}
+
+/* Highlight target slot when dragging over */
+.grid-slot.drag-over {
+  box-shadow: inset 0 0 0 3px #3b82f6;
+  z-index: 10;
+}
+
+.grid-slot.drag-over .slot-empty {
+  background: #f1f5f9;
+  border-color: #3b82f6;
+  color: #3b82f6;
+}
+
+/* Empty Slot Design */
+.slot-empty {
+  position: absolute;
+  inset: 0;
+  background: #ffffff;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: #94a3b8;
+  border: 2px dashed #e2e8f0;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.slot-empty:hover {
+  background: #f8fafc;
+  border-color: #cbd5e1;
+  color: #64748b;
+}
+
+.plus-icon {
+  font-size: 28px;
+  font-weight: 300;
+  margin-bottom: 6px;
+  line-height: 1;
+}
+
+.slot-label {
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+
+/* Occupied Cropper Styles */
+.cropper-container {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  overflow: hidden;
+  cursor: grab;
+}
+
+.cropper-container:active {
+  cursor: grabbing;
+}
+
+.crop-image {
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: block;
+  pointer-events: none;
+  will-change: transform;
+}
+
+/* Filename text overlay styling */
+.slot-filename {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: rgba(15, 23, 42, 0.75);
+  backdrop-filter: blur(4px);
+  color: #ffffff;
+  font-size: 11px;
+  font-weight: 500;
+  text-align: center;
+  padding: 6px;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease;
+  z-index: 50;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.grid-canvas.show-filenames .slot-filename {
+  opacity: 1;
+}
+
+/* Automatically hide filenames when controls overlay is active */
+.grid-canvas.show-filenames.mode-crop .slot-filename {
+  opacity: 0;
+}
+
+/* Morphing Grid Slot Controls based on Edit Mode */
+.slot-controls {
+  position: absolute;
+  background: rgba(15, 23, 42, 0.85);
+  backdrop-filter: blur(8px);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: 100;
+}
+
+.grid-slot:hover .slot-controls {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* ARRANGE LAYOUT MODE STYLING */
+.grid-canvas.mode-arrange .slot-controls {
+  top: 8px;
+  left: 8px;
+  right: 8px;
+  bottom: auto;
+  width: auto;
+  height: auto;
+  border-radius: 6px;
+  padding: 4px 8px;
+  background: rgba(15, 23, 42, 0.9);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.grid-canvas.mode-arrange .crop-controls-group {
+  display: none !important;
+}
+
+.grid-canvas.mode-arrange .remove-btn {
+  width: 20px;
+  height: 20px;
+  font-size: 16px;
+  padding: 0;
+  color: #f87171;
+  background: none;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* CROP & ZOOM MODE STYLING */
+.grid-canvas.mode-crop .slot-controls {
+  bottom: 8px;
+  left: 8px;
+  right: 8px;
+  top: auto;
+  border-radius: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 6px 10px;
+}
+
+.crop-controls-group {
+  display: flex;
+  align-items: center;
+  flex-grow: 1;
+}
+
+.zoom-label {
+  font-size: 10px;
+  font-weight: 600;
+  color: #94a3b8;
+  text-transform: uppercase;
+}
+
+/* Custom Zoom Slider input */
+.zoom-slider {
+  flex-grow: 1;
+  margin: 0 8px;
+  height: 4px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 2px;
+  outline: none;
+  -webkit-appearance: none;
+  cursor: pointer;
+}
+
+.zoom-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: var(--color-primary);
+  box-shadow: 0 0 6px var(--color-primary-glow);
+  cursor: pointer;
+  transition: transform 0.1s ease;
+}
+
+.zoom-slider::-webkit-slider-thumb:hover {
+  transform: scale(1.2);
+}
+
+.grid-canvas.mode-crop .remove-btn {
+  background: none;
+  border: none;
+  color: #f87171;
+  font-size: 18px;
+  font-weight: 500;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2px 4px;
+  border-radius: 4px;
+  transition: all 0.15s ease;
+}
+
+.remove-btn:hover {
+  color: #ef4444;
+  background: rgba(239, 68, 68, 0.1);
+}
+
+/* Utilities */
+.hidden {
+  display: none !important;
+}
+
+/* Dragging overlay style */
+.dragging-grid-source {
+  opacity: 0.4;
+}
+
+/* Disable pointer events on slot children during active drag-and-drop */
+.dragging-active .grid-slot * {
+  pointer-events: none !important;
+}
+
+/* Grouping Selection Mode UI */
+.group-selection-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 10px;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px dashed rgba(255, 255, 255, 0.1);
+  padding: 10px;
+  border-radius: 8px;
+}
+
+.selection-help {
+  font-size: 11px;
+  color: var(--color-text-muted);
+  line-height: 1.4;
+  margin-bottom: 4px;
+}
+
+.action-buttons-row {
+  display: flex;
+  gap: 8px;
+}
+
+.action-buttons-row .btn {
+  flex: 1;
+  padding: 8px 12px;
+  font-size: 12px;
+}
+
+/* Grid Slot Selection for Grouping */
+.grid-slot.group-selected {
+  box-shadow: inset 0 0 0 3px var(--color-primary) !important;
+  z-index: 5;
+}
+
+.grid-slot.group-selected .slot-empty {
+  border-color: var(--color-primary);
+  background: rgba(0, 229, 255, 0.03);
+  color: var(--color-primary);
+}
+
+/* Active grouping visual border outline on hover */
+.grid-slot.is-grouped::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border: 1px dashed rgba(79, 172, 254, 0.25);
+  pointer-events: none;
+  border-radius: 6px;
+  z-index: 2;
+  transition: all 0.2s ease;
+}
+
+.grid-slot.is-grouped:hover::after {
+  border-color: var(--color-primary);
+  box-shadow: inset 0 0 0 1px var(--color-primary-glow);
+}
+
+/* Group control buttons style */
+.ungroup-btn {
+  background: none;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: #ffffff;
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  cursor: pointer;
+  padding: 3px 6px;
+  border-radius: 4px;
+  transition: all 0.15s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.ungroup-btn:hover {
+  background: rgba(255, 255, 255, 0.12);
+  border-color: #ffffff;
+}
+
+/* Pinned Slot and button styling */
+.pin-btn {
+  background: none;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: #ffffff;
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  cursor: pointer;
+  padding: 3px 6px;
+  border-radius: 4px;
+  transition: all 0.15s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.pin-btn:hover {
+  background: rgba(255, 255, 255, 0.12);
+  border-color: #ffffff;
+}
+
+.pin-btn.is-active {
+  background: rgba(0, 229, 255, 0.15);
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+}
+
+.pin-btn.is-active:hover {
+  background: rgba(0, 229, 255, 0.25);
+  border-color: var(--color-primary);
+}
+
+.slot-controls-left {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+
+.pin-badge {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  background: rgba(15, 23, 42, 0.85);
+  backdrop-filter: blur(4px);
+  border: 1px solid var(--color-primary);
+  color: #ffffff;
+  font-size: 11px;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+  z-index: 60;
+  pointer-events: none; /* Make badge click-through */
+}
+
+.grid-slot.is-pinned .pin-badge {
+  display: flex;
+}
+
+/* Add custom class styling for Active Group Mode state on uploader button */
+.btn-group-active {
+  background: var(--color-primary-grad) !important;
+  color: #0b0e14 !important;
+  font-weight: 600;
+  box-shadow: 0 0 12px var(--color-primary-glow) !important;
+}
