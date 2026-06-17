@@ -5,6 +5,114 @@ let gridGroups = []; // Array of group objects: {id, indices:[], imageId, zoom, 
 let currentMode = 'arrange'; // 'arrange' (move/swap slots) or 'crop' (pan/zoom)
 let selectedLibraryImageId = null; // Stored image ID for click-to-select and click-to-place fallback
 
+let currentLang = 'en';
+
+const TRANSLATIONS = {
+  en: {
+    editMode: 'Edit Mode',
+    arrange: 'Arrange',
+    crop: 'Crop & Zoom',
+    mosaicGrouping: 'Mosaic Grouping',
+    groupSquares: 'Group Squares',
+    groupHelp: 'Click squares on the grid to group them, then click Confirm.',
+    cancel: 'Cancel',
+    confirm: 'Confirm',
+    exportSettings: 'Export Settings',
+    showFilenames: 'Show Filenames on Grid',
+    randomize: 'Randomize Layout',
+    clearGrid: 'Clear Grid',
+    undo: 'Undo',
+    saveGrid: 'Save Grid',
+    photoBin: 'Photo Bin',
+    loadJpegs: 'Load JPEGs',
+    binHelp: 'Drag photos here or click \'Load JPEGs\' to import.',
+    alertJpegsOnly: 'Please load JPEG files (.jpg or .jpeg) only.',
+    alertAlreadyGrouped: 'This square is already part of another group. Please ungroup it first.',
+    alertMinSquares: 'Please select at least 2 squares to create a group.',
+    alertConfirmClear: 'Are you sure you want to clear your current grid?',
+    alertEmptyGrid: 'The grid is empty. Please place at least one image to save.',
+    alertUploadFirst: 'Please upload some JPEGs first to randomize the grid layout!',
+    alertExportError: 'Could not export grid image. Check console for details.',
+    labelDragPhoto: 'Drag Photo',
+    labelGroupFrame: 'Group Frame',
+    labelSelecting: 'Selecting...',
+    labelGenerating: 'Generating...',
+    zoomLabel: 'Zoom',
+    removeLabel: 'Remove photo',
+    splitLabel: '🔗 Split',
+    splitTitle: 'Split group back to single squares',
+    unlockPhoto: 'Unlock photo',
+    lockPhoto: 'Lock photo in place',
+    labelPinned: 'Pinned',
+    labelPin: 'Pin',
+    photoCountSingular: '1 photo',
+    photoCountPlural: '{count} photos'
+  },
+  ja: {
+    editMode: '編集モード',
+    arrange: '配置・入替',
+    crop: 'トリミング・ズーム',
+    mosaicGrouping: 'マスを繋ぐ',
+    groupSquares: 'マスをグループ化',
+    groupHelp: 'グリッド上のマスをクリックして選択し、「決定」を押してください。',
+    cancel: 'キャンセル',
+    confirm: '決定',
+    exportSettings: '書き出し設定',
+    showFilenames: 'グリッドにファイル名を表示',
+    randomize: 'ランダム配置',
+    clearGrid: 'グリッドをクリア',
+    undo: '元に戻す',
+    saveGrid: '画像を保存',
+    photoBin: '写真ライブラリ',
+    loadJpegs: 'JPEGを読み込む',
+    binHelp: '写真をここにドラッグするか、「JPEGを読み込む」をクリックしてインポートします。',
+    alertJpegsOnly: 'JPEGファイル（.jpg または .jpeg）のみを選択してください。',
+    alertAlreadyGrouped: 'このマスはすでに他のグループに含まれています。先にグループを解除してください。',
+    alertMinSquares: 'グループ化するには、少なくとも2つのマスを選択してください。',
+    alertConfirmClear: '現在のグリッドをクリアしてもよろしいですか？',
+    alertEmptyGrid: 'グリッドが空です。保存するには少なくとも1枚の写真を配置してください。',
+    alertUploadFirst: 'ランダム配置を行う前に、まずJPEG写真をアップロードしてください！',
+    alertExportError: '画像を書き出せませんでした。詳細はコンソールを確認してください。',
+    labelDragPhoto: '写真をドラッグ',
+    labelGroupFrame: 'グループフレーム',
+    labelSelecting: '選択中...',
+    labelGenerating: '生成中...',
+    zoomLabel: 'ズーム',
+    removeLabel: '写真を削除',
+    splitLabel: '🔗 解除',
+    splitTitle: 'グループを解除して個々のマスに分割します',
+    unlockPhoto: 'ロックを解除',
+    lockPhoto: '写真を固定',
+    labelPinned: '固定中',
+    labelPin: '固定',
+    photoCountSingular: '写真 1枚',
+    photoCountPlural: '写真 {count}枚'
+  }
+};
+
+function t(key, replacements = {}) {
+  const text = TRANSLATIONS[currentLang][key] || key;
+  let result = text;
+  for (const [k, v] of Object.entries(replacements)) {
+    result = result.replace(`{${k}}`, v);
+  }
+  return result;
+}
+
+function applyTranslations() {
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const key = el.getAttribute('data-i18n');
+    const text = t(key);
+    // Find the text node of this element to update it, leaving children (like SVG icons) intact
+    const textNode = Array.from(el.childNodes).find(node => node.nodeType === Node.TEXT_NODE);
+    if (textNode) {
+      textNode.textContent = text;
+    } else {
+      el.textContent = text;
+    }
+  });
+}
+
 // Undo Stack State
 let undoStack = [];
 const MAX_UNDO_STACK_SIZE = 15;
@@ -57,6 +165,24 @@ function init() {
       undo();
     }
   });
+
+  // Language Selector click listeners
+  const langBtns = document.querySelectorAll('.lang-btn');
+  langBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      const lang = btn.getAttribute('data-lang');
+      if (lang !== currentLang) {
+        currentLang = lang;
+        langBtns.forEach(b => b.classList.toggle('active', b === btn));
+        applyTranslations();
+        renderGrid();
+        updateLibraryUI();
+      }
+    });
+  });
+
+  // Apply default language translations
+  applyTranslations();
 }
 
 // Undo Stack Management
@@ -129,7 +255,7 @@ function handleFiles(files) {
   );
 
   if (imageFiles.length === 0) {
-    alert('Please load JPEG files (.jpg or .jpeg) only.');
+    alert(t('alertJpegsOnly'));
     return;
   }
 
@@ -156,13 +282,13 @@ function updateLibraryUI() {
   if (loadedImages.length === 0) {
     libraryEmpty.classList.remove('hidden');
     imageLibrary.classList.add('hidden');
-    imageCount.textContent = '0 photos';
+    imageCount.textContent = t('photoCountPlural', { count: 0 });
     return;
   }
 
   libraryEmpty.classList.add('hidden');
   imageLibrary.classList.remove('hidden');
-  imageCount.textContent = `${loadedImages.length} photo${loadedImages.length > 1 ? 's' : ''}`;
+  imageCount.textContent = t(loadedImages.length === 1 ? 'photoCountSingular' : 'photoCountPlural', { count: loadedImages.length });
 
   imageLibrary.innerHTML = '';
   loadedImages.forEach(imgObj => {
@@ -304,7 +430,7 @@ function setupGridListeners() {
         } else {
           // Check if this slot already belongs to another group
           if (getSlotGroup(index)) {
-            alert('This square is already part of another group. Please ungroup it first.');
+            alert(t('alertAlreadyGrouped'));
             return;
           }
           selectedSlotIndices.push(index);
@@ -457,7 +583,7 @@ function renderGridSlot(index) {
     slotDom.innerHTML = `
       <div class="slot-empty">
         <span class="plus-icon">${group ? '🔗' : '+'}</span>
-        <span class="slot-label">${group ? 'Group Frame' : 'Drag Photo'}</span>
+        <span class="slot-label">${group ? t('labelGroupFrame') : t('labelDragPhoto')}</span>
       </div>
     `;
     return;
@@ -490,10 +616,10 @@ function renderGridSlot(index) {
   controls.className = 'slot-controls';
   
   const isPinned = slotState.pinned || false;
-  const pinHTML = `<button class="pin-btn ${isPinned ? 'is-active' : ''}" title="${isPinned ? 'Unlock photo' : 'Lock photo in place'}">📌 ${isPinned ? 'Pinned' : 'Pin'}</button>`;
+  const pinHTML = `<button class="pin-btn ${isPinned ? 'is-active' : ''}" title="${isPinned ? t('unlockPhoto') : t('lockPhoto')}">📌 ${isPinned ? t('labelPinned') : t('labelPin')}</button>`;
   
   // Custom HTML: Include "Split/Ungroup" button if grouped
-  const ungroupHTML = group ? `<button class="ungroup-btn" title="Split group back to single squares">🔗 Split</button>` : '';
+  const ungroupHTML = group ? `<button class="ungroup-btn" title="${t('splitTitle')}">${t('splitLabel')}</button>` : '';
 
   controls.innerHTML = `
     <div class="slot-controls-left">
@@ -501,10 +627,10 @@ function renderGridSlot(index) {
       ${pinHTML}
     </div>
     <div class="crop-controls-group">
-      <span class="zoom-label">Zoom</span>
+      <span class="zoom-label">${t('zoomLabel')}</span>
       <input type="range" class="zoom-slider" min="1" max="3" step="0.05" value="${slotState.zoom}">
     </div>
-    <button class="remove-btn" title="Remove photo">&times;</button>
+    <button class="remove-btn" title="${t('removeLabel')}">&times;</button>
   `;
 
   // Set up Filename overlay element
@@ -873,7 +999,7 @@ function toggleGroupSelectionMode() {
   } else {
     isGroupSelectionMode = true;
     selectedSlotIndices = [];
-    btnGroupMode.textContent = 'Selecting...';
+    btnGroupMode.textContent = t('labelSelecting');
     btnGroupMode.classList.add('btn-group-active');
     groupSelectionActions.classList.remove('hidden');
     setMode('arrange'); // Exits crop adjustments when grouping
@@ -884,7 +1010,7 @@ function toggleGroupSelectionMode() {
 function cancelGroupSelection() {
   isGroupSelectionMode = false;
   selectedSlotIndices = [];
-  btnGroupMode.textContent = 'Group Squares';
+  btnGroupMode.textContent = t('groupSquares');
   btnGroupMode.classList.remove('btn-group-active');
   groupSelectionActions.classList.add('hidden');
   renderGrid();
@@ -892,7 +1018,7 @@ function cancelGroupSelection() {
 
 function confirmGroupSelection() {
   if (selectedSlotIndices.length < 2) {
-    alert('Please select at least 2 squares to create a group.');
+    alert(t('alertMinSquares'));
     return;
   }
 
@@ -1052,7 +1178,7 @@ function ungroupSlots(groupId) {
 
 function clearGrid() {
   if (gridSlots.every(slot => slot === null) && gridGroups.length === 0) return;
-  if (confirm('Are you sure you want to clear your current grid?')) {
+  if (confirm(t('alertConfirmClear'))) {
     saveStateToUndoStack();
     gridSlots.fill(null);
     gridGroups = [];
@@ -1071,7 +1197,7 @@ function shuffleArray(array) {
 
 function randomizeGrid() {
   if (loadedImages.length === 0) {
-    alert('Please upload some JPEGs first to randomize the grid layout!');
+    alert(t('alertUploadFirst'));
     return;
   }
 
@@ -1155,13 +1281,13 @@ function saveGrid() {
   const slotsEmpty = gridSlots.every(slot => slot === null);
   const groupsEmpty = gridGroups.every(group => group.imageId === null);
   if (slotsEmpty && groupsEmpty) {
-    alert('The grid is empty. Please place at least one image to save.');
+    alert(t('alertEmptyGrid'));
     return;
   }
 
   // Visual feedback: disable save button during render
   btnSave.disabled = true;
-  btnSave.textContent = 'Generating...';
+  btnSave.textContent = t('labelGenerating');
 
   // Output grid dimensions (Contest high quality)
   const CANVAS_SIZE = 3000;
@@ -1334,14 +1460,19 @@ function saveGrid() {
         <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/>
         </svg>
-        Save Grid
+        <span data-i18n="saveGrid">${t('saveGrid')}</span>
       `;
     }, 'image/jpeg', 0.95);
   }).catch((err) => {
     console.error('Error rendering high-res grid:', err);
-    alert('Could not export grid image. Check console for details.');
+    alert(t('alertExportError'));
     btnSave.disabled = false;
-    btnSave.textContent = 'Save Grid';
+    btnSave.innerHTML = `
+      <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/>
+      </svg>
+      <span data-i18n="saveGrid">${t('saveGrid')}</span>
+    `;
   });
 }
 
